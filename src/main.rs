@@ -53,7 +53,7 @@ async fn main() -> Result<(), Error> {
         value: FieldElement::from_hex_str("069673d708ad3174714a2c27ffdb56f9b3bfb38c1ea062e070c3ace63e9e26eb"),
     };
 
-    let secret = FieldElement::from(40);
+    let secret = FieldElement::from(42);
 
     let proof = claim.prove(&secret).unwrap();
     
