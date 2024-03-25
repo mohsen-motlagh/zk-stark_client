@@ -1,0 +1,18 @@
+[package]
+name = "stark-client"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+zkp-stark = "=0.1.2"
+hex = "0.4.3"
+zkp-macros-lib = "0.2.0"
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+base64 = "0.22.0"
+reqwest = { version = "0.11", features = ["json"] }
+zkp-macros-decl = "0.2.0"
+zkp-u256 = "0.2.1"
+log = "0.4.21"
+zkp-primefield = "0.1.1"
