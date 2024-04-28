@@ -1,6 +1,6 @@
 use zkp_stark::{*, primefield::*};
 use reqwest::Error;
-
+use std::time::Instant;
 
 struct FibonacciClaim {
     index: usize,
@@ -55,29 +55,36 @@ async fn main() -> Result<(), Error> {
 
     let secret = FieldElement::from(42);
 
+    let start_time = Instant::now(); // Start timing proof generation
+
     let proof = claim.prove(&secret).unwrap();
-    
+
+    let duration = start_time.elapsed(); // Measure proof generation time
+
     let proof_bytes = proof.as_bytes(); // Get the byte slice
+    let proof_size = proof_bytes.len(); // Measure the size of the proof in bytes
     let proof_hex = hex::encode(proof_bytes); // Convert byte slice to hex string
-    
+
+    println!("Proof generation time: {:?}", duration);
+    println!("Proof size: {} bytes", proof_size);
+
     let serialized_proof = serde_json::json!({
-            "proof": proof_hex
+        "proof": proof_hex,
     });
-    
+
     let client = reqwest::Client::new();
-    println!("Hello, world! 45666");
-    let res = client.post("http://localhost:8080/submit_proof")
+    let server_url = std::env::var("SERVER_URL").unwrap_or_else(|_| "http://server_zkstark:8000/submit_proof".to_string());
+    let res = client.post(&server_url)
         .json(&serialized_proof)
         .send()
         .await?;
 
-        if res.status().is_success() {
-            let body = res.text().await?; // For text response
-            println!("Response body: {}", body);
-        } else {
-            println!("Request failed with status: {}", res.status());
-        }
-        
-        Ok(())
-    
+    if res.status().is_success() {
+        let body = res.text().await?;
+        println!("Response body: {}", body);
+    } else {
+        println!("Request failed with status: {}", res.status());
+    }
+
+    Ok(())
 }
